@@ -116,27 +116,12 @@ def get_href(element, atr_name, tag='a'):
 
 
 def get_decision(element, tag='span', class_name="registry-entry__body-title distancedText mr-4"):
+    decision = ""
     check_decision = element.find(tag, class_name)
     if check_decision:
         decision = check_decision.get_text(strip=True)
-    else:
-        decision = ""
     return decision
 
-
-# def get_prescription(element, tag='span', class_name="registry-entry__body-title distancedText mr-4"):
-#     check_prescription_1 = element.find(tag, class_name)
-#     check_prescription_2 = check_prescription_1.find_next(tag, class_name)
-#     if check_prescription_2:
-#         prescription = check_prescription_2.get_text(strip=True)
-#     elif check_prescription_1:
-#         text_prescription = check_prescription_1.get_text(strip=True)
-#         prescription = ''
-#         if text_prescription == 'Предписание не выдано' or text_prescription == 'Предписание выдано':
-#             prescription = check_prescription_1
-#     else:
-#         prescription = ""
-#     return prescription
 
 def get_prescription(element, tag='span', class_name="registry-entry__body-title distancedText mr-4"):
     prescription = ""
