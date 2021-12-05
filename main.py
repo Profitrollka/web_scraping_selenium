@@ -14,40 +14,6 @@ url_full = 'https://zakupki.gov.ru/epz/complaint/search/search_eis.html?searchSt
            '&sortBy=UPDATE_DATE&pageNumber=1&sortDirection=false&recordsPerPage=_50&showLotsInfoHidden=true'
 
 
-
-# def receive_query_status(query_params, name_status):
-#     """
-#     :param query_params: input query parameters
-#     :param name_status: published-размещена, regarded-рассматривается, considered-рассмотрена, returned-отказано в
-#     рассмотрении, cancelled-отозвана
-#     :return: output query parameters, depending on the name of desision
-#     """
-#     statuses = {'considered', 'returned', 'cancelled', 'published', 'regarded'}
-#     for element in statuses:
-#         if element in query_params.keys():
-#             del query_params[element]
-#     query_params[name_status] = 'on'
-#     return query_params
-#
-#
-# def receive_query_decision(query_params, name_decision, name_status):
-#     """
-#     :param query_params: input query parameters
-#     :param name_decision: justified-обоснована, partially_justified-обоснована частично, not_justified-не обоснована,
-#     not_competence-не относится к компетенции тек органах
-#     :return: output query parameters, depending on the name of decision
-#     """
-#     decisions = {'justified': 0, 'partially_justified': 1, 'not_justified': 2, 'not_competence': 3}
-#     for element in decisions.values():
-#         if 'decisionOnTheComplaintTypeResult_{}'.format(element) in query_params.keys():
-#             del query_params['decisionOnTheComplaintTypeResult_{}'.format(element)]
-#     if name_status == 'considered':
-#         query_params['decisionOnTheComplaintTypeResult_{}'.format(decisions[name_decision])] = 'on'
-#         query_params['decisionOnTheComplaintTypeResult'] = str(decisions[name_decision])
-#     query_params['decisionOnTheComplaintTypeResult'] = ''
-#     return query_params
-
-
 def receive_query_params(query_params, name_decision, name_status=None):
     """
     :param query_params: input query parameters
@@ -158,18 +124,25 @@ def get_decision(element, tag='span', class_name="registry-entry__body-title dis
     return decision
 
 
+# def get_prescription(element, tag='span', class_name="registry-entry__body-title distancedText mr-4"):
+#     check_prescription_1 = element.find(tag, class_name)
+#     check_prescription_2 = check_prescription_1.find_next(tag, class_name)
+#     if check_prescription_2:
+#         prescription = check_prescription_2.get_text(strip=True)
+#     elif check_prescription_1:
+#         text_prescription = check_prescription_1.get_text(strip=True)
+#         prescription = ''
+#         if text_prescription == 'Предписание не выдано' or text_prescription == 'Предписание выдано':
+#             prescription = check_prescription_1
+#     else:
+#         prescription = ""
+#     return prescription
+
 def get_prescription(element, tag='span', class_name="registry-entry__body-title distancedText mr-4"):
-    check_prescription_1 = element.find(tag, class_name)
-    check_prescription_2 = check_prescription_1.find_next(tag, class_name)
-    if check_prescription_2:
-        prescription = check_prescription_2.get_text(strip=True)
-    elif check_prescription_1:
-        text_prescription = check_prescription_1.get_text(strip=True)
-        prescription = ''
-        if text_prescription == 'Предписание не выдано' or text_prescription == 'Предписание выдано':
-            prescription = check_prescription_1
-    else:
-        prescription = ""
+    prescription = ""
+    check_prescription = element.find(tag, class_name).find_next_siblings()[0]
+    if check_prescription.get_text(strip=True) in ('Предписание не выдано', 'Предписание выдано'):
+        prescription = check_prescription.get_text(strip=True)
     return prescription
 
 
